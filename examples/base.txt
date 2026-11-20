@@ -1,0 +1,6 @@
+home | The item is {name}. The specifications include {facts}.
+home | This listing identifies {name}. Its details are {facts}.
+travel | The item is {name}. The specifications include {facts}.
+travel | This listing identifies {name}. Its details are {facts}.
+desk | The item is {name}. The specifications include {facts}.
+desk | This listing identifies {name}. Its details are {facts}.
