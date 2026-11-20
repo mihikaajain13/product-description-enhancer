@@ -17,3 +17,34 @@ def softmax(x):
 def render(words, name, facts):
     line = re.sub(r"\s+([.,:!?])", r"\1", " ".join(words))
     return line.replace("{name}", name).replace("{facts}", facts)
+
+class Writer:
+    def __init__(self, mode="adapter"):
+        with np.load(ROOT/"models/base.npz") as base:
+            self.vocab = base["vocab"].tolist()
+            self.tables = [base[k] for k in ("group","prev","last")]
+            self.weight = base["weight"]
+        if mode == "adapter":
+            with np.load(ROOT/"models/adapter.npz") as adapter:
+                self.weight += adapter["a"] @ adapter["b"]
+        elif mode != "base":
+            raise ValueError("Unknown model mode")
+
+    def generate(self, name, category, facts):
+        name = name.strip()
+        facts = [s.strip() for s in facts if s.strip()]
+        if not name or not facts:
+            raise ValueError("Enter a product name and at least one feature.")
+        ids = [self.vocab.index("<s>")]*2
+        words = []
+        for _ in range(70):
+            indices = (GROUPS.index(category), *ids[-2:])
+            h = np.concatenate([table[i] for table,i in zip(self.tables,indices)])
+            token = int((h @ self.weight).argmax())
+            word = self.vocab[token]
+            if word == "</s>":
+                break
+            words.append(word)
+            ids.append(token)
+        features = ", ".join(facts[:-1])+" and "+facts[-1] if len(facts)>1 else facts[0]
+        return render(words,name,features)
