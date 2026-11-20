@@ -1,0 +1,20 @@
+{
+  "merge_max_logit_difference": 3.0517578125e-05,
+  "samples": [
+    {
+      "product": "Fern Vase",
+      "base": "The Fern Vase is a lightweight, lightweight, lightweight, and durable, and is designed to protect against the elements of the environment. It is designed to protect against the elements of the environment. It is designed to protect against the elements of the environment. It is designed to protect against the elements of the environment. It",
+      "merged": "Make room for Fern Vase for your room. Its details include matte finish and matte finish."
+    },
+    {
+      "product": "Coast Tote",
+      "base": "The Coast Tote is a cotton-based cotton-based cotton-based cotton-based cotton-based cotton-based cotton-based cotton-based cotton-based cotton-based cotton-based cotton-based cotton-based cotton-based cotton-based cotton-based cotton-based cotton-based cotton-based cotton",
+      "merged": "Plan your next outing with Coast Tote."
+    },
+    {
+      "product": "Arc Organizer",
+      "base": "The Arc Organizer is a small, lightweight, lightweight, lightweight, lightweight, lightweight, lightweight, lightweight, lightweight, lightweight, lightweight, lightweight, lightweight, lightweight, lightweight, lightweight, lightweight, lightweight, lightweight, lightweight, lightweight, lightweight, lightweight, lightweight, lightweight, lightweight, lightweight, lightweight, lightweight,",
+      "merged": "Plan your next step with Arc Organizer."
+    }
+  ]
+}

@@ -10,4 +10,4 @@ __pycache__/
 # Local data
 data/
 *.db
-/models/gpt2-*/
+/models/gpt2-merged/

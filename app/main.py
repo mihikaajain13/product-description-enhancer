@@ -39,3 +39,6 @@ if submitted:
                              return_full_text=False,pad_token_id=generator.tokenizer.eos_token_id)[0]["generated_text"].strip()
         st.subheader("Product description")
         st.text(copy)
+        missing = [f for f in facts if f.casefold() not in copy.casefold()]
+        if missing:
+            st.caption("Feature terms absent from the draft: " + ", ".join(missing))

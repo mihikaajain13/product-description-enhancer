@@ -19,15 +19,16 @@ def render(words, name, facts):
     return line.replace("{name}", name).replace("{facts}", facts)
 
 class Writer:
-    def __init__(self, mode="adapter"):
-        with np.load(ROOT/"models/base.npz") as base:
+    def __init__(self, mode="merged"):
+        file = "merged.npz" if mode == "merged" else "base.npz"
+        with np.load(ROOT/"models"/file) as base:
             self.vocab = base["vocab"].tolist()
             self.tables = [base[k] for k in ("group","prev","last")]
             self.weight = base["weight"]
         if mode == "adapter":
             with np.load(ROOT/"models/adapter.npz") as adapter:
                 self.weight += adapter["a"] @ adapter["b"]
-        elif mode != "base":
+        elif mode not in ("base","merged"):
             raise ValueError("Unknown model mode")
 
     def generate(self, name, category, facts):

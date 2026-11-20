@@ -32,7 +32,8 @@ def train(base="distilgpt2", epochs=8):
             optimizer.zero_grad()
             model(input_ids=inputs,labels=labels).loss.backward()
             optimizer.step()
-    model.save_pretrained(ROOT/"models/gpt2-adapter")
+    model.peft_config["default"].base_model_name_or_path = base if not Path(base).is_dir() else "distilgpt2"
+    model.save_pretrained(ROOT/"models/gpt2-adapter", save_embedding_layers=False)
     model.eval().merge_and_unload().save_pretrained(ROOT/"models/gpt2-merged")
     tokenizer.save_pretrained(ROOT/"models/gpt2-merged")
 

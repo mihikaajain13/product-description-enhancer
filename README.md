@@ -14,39 +14,44 @@ This project provides e-commerce managers with a powerful tool to enhance their 
 
 Tick these off as you go, and commit after each one.
 
-- [ ] **1. Compile a small dataset of product specs and marketing descriptions.**  
+- [x] **1. Compile a small dataset of product specs and marketing descriptions.**  
       Hint: Compile and format your product spec and description pairs into a suitable dataset.
-- [ ] **2. Implement LoRA adapter injection and training on a pre-trained LLM (e.g., GPT-2).**  
+- [x] **2. Implement LoRA adapter injection and training on a pre-trained LLM (e.g., GPT-2).**  
       Hint: Implement LoRA adapter injection and training on a pre-trained LLM using the `lfllm-lflora` technique.
-- [ ] **3. Develop a Streamlit UI to input product specs and generate enhanced descriptions.**  
+- [x] **3. Develop a Streamlit UI to input product specs and generate enhanced descriptions.**  
       Hint: Develop a Streamlit UI to handle input of product specs and display the generated descriptions.
-- [ ] **4. Assess the creativity and relevance of the generated descriptions.**  
+- [x] **4. Assess the creativity and relevance of the generated descriptions.**  
       Hint: Qualitatively assess the generated descriptions for creativity, relevance, and adherence to marketing goals.
-- [ ] **5. Implement adapter merging for inference.**  
+- [x] **5. Implement adapter merging for inference.**  
       Hint: Implement LoRA adapter merging for efficient inference, utilizing the `lfllm-lflora` technique.
 
-## Run it
+## Run the Streamlit app
 
-You need Python 3.12 and git.
+From the repository folder with Python 3.12:
 
 ```bash
-python3.12 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env        # then choose a model; see the comments inside
-streamlit run app/main.py
-pytest
+python -m pip install -r requirements.txt
+python -m streamlit run app/main.py
 ```
 
-Your work goes in `app/core.py` (one stub per milestone) and `tests/test_core.py`. The first tests pass already; they
-check the plumbing.
+Enter a product name, category and one feature or search term per line. Try **Coast Tote**, **travel**, **cotton** and **flat base**. The compact model runs from included merged NumPy weights, offline, without training or an API key.
 
-## Settings and secrets
+## Enable the fine-tuned DistilGPT-2 model
 
-Model settings live in `.env`, which is ignored by git. **Never commit `.env` or paste a key into code.** If a key ever
-reaches GitHub, treat it as leaked and make a new one.
+The repository ships the trained rank-8 attention adapter. Download the public base model once and merge locally:
 
-## Stretch ideas
+```bash
+python -m pip install -r requirements-gpt2.txt
+python -m tools.merge --gpt2
+python -m streamlit run app/main.py
+```
 
-- Add options in the UI for users to specify the desired tone (e.g., formal, casual) for the generated descriptions.
-- Allow users to input specific keywords that the generated descriptions should aim to include.
-- Implement a simple feedback mechanism (e.g., thumbs up/down) for generated descriptions to gather qualitative data.
+Select **GPT-2 LoRA** in the model selector. For an existing local DistilGPT-2 download, supply its directory with `--base`. The full merged transformer stays local to keep Git uploads small. The Dockerfile runs the compact mode by default.
+
+## Training and evaluation
+
+The 12 original product-specification pairs cover home, travel and desk products. Each category has three training products and one held-out product. The DistilGPT-2 path freezes the pretrained transformer and trains low-rank attention projection updates for eight epochs using loss on description tokens only. To retrain, use `python -m tools.gpt2`. Its adapter update is merged into the base weights for inference.
+
+The compact alternative pretrains a conditional neural language model on neutral text and adapts its frozen output projection with rank-12 LoRA. It generates category-specific wording and copies supplied product names and features through slots. Rebuild with `python -m tools.train` then `python -m tools.merge`.
+
+See EVALUATION.md for held-out outputs, feature coverage, creativity and limitations. Run `python -m pytest -q` for the quick form and merge checks. GitHub Actions runs those checks without training or downloading a transformer.
